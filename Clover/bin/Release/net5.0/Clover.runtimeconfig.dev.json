@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\vetur\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\vetur\\.nuget\\packages"
+    ]
+  }
+}

@@ -1,0 +1,375 @@
+﻿@page "/items/{caseNumber}"
+@inject LocalizationService localization
+@inject ItemService itemService
+@inject CaseService caseService
+@inject NavigationManager navigationManager
+@inject IModalService modalService
+<!--back button-->
+<div class="btn btn-primary oi oi-arrow-left" @onclick="@(() => navigationManager.NavigateTo("/"))"></div>
+<!--case information-->
+<span class="form-group">
+    <label>@localization.localizations.CaseNumber</label>
+    <span class="badge badge-pill badge-primary">@_case.CaseNumber</span>
+    <label>@localization.localizations.NumberOfItems</label>
+    <span class="badge badge-pill badge-primary">@items.Count</span>
+    <label>@localization.localizations.Sum</label>
+    <span class="badge badge-pill badge-primary">@itemService.GetSum(items)</span>
+    <label>@localization.localizations.Comment</label>
+    <span class="badge badge-pill badge-primary">@_case.Comment</span>
+</span>
+<br />
+<br />
+<!--buttons-->
+<div class="btn btn-primary" @onclick="CreateItem">@localization.localizations.NewItem</div>
+<div class="btn-group" role="group">
+    <div class="btn btn-danger" @onclick="DeleteAllItems">@localization.localizations.DeleteAllItems</div>
+    <div class="btn btn-secondary disabled">@deleteAllItemsCounter</div>
+    <span style="margin:5px;"></span>
+</div>
+@if (localization.GetLocale() == LocaleEnum.HuHu)
+{
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-success" @onclick="localization.SetHungarianLanguage">@localization.localizations.Hungarian</button>
+        <button type="button" class="btn btn-primary" @onclick="localization.SetEnglishLanguage">@localization.localizations.English</button>
+    </div>
+}
+else if (localization.GetLocale() == LocaleEnum.EnUs)
+{
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary" @onclick="localization.SetHungarianLanguage">@localization.localizations.Hungarian</button>
+        <button type="button" class="btn btn-success" @onclick="localization.SetEnglishLanguage">@localization.localizations.English</button>
+    </div>
+}
+else
+{
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary" @onclick="localization.SetHungarianLanguage">@localization.localizations.Hungarian</button>
+        <button type="button" class="btn btn-primary" @onclick="localization.SetEnglishLanguage">@localization.localizations.English</button>
+    </div>
+}
+<br />
+<br />
+<hr />
+<!--add item form-->
+<div class="form-group">
+    @if (newItem.IsIn && isInOutButtonGroupClicked)
+    {
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-success" @onclick="@(() => { newItem.IsIn = true; isInOutButtonGroupClicked = true;})">@localization.localizations.In</button>
+            <button type="button" class="btn btn-primary" @onclick="@(() => { newItem.IsIn = false; isInOutButtonGroupClicked = true;})">@localization.localizations.Out</button>
+        </div>
+    }
+    else if (!newItem.IsIn && isInOutButtonGroupClicked)
+    {
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary" @onclick="@(() => { newItem.IsIn = true; isInOutButtonGroupClicked = true;})">@localization.localizations.In</button>
+            <button type="button" class="btn btn-success" @onclick="@(() => { newItem.IsIn = false; isInOutButtonGroupClicked = true;})">@localization.localizations.Out</button>
+        </div>
+    }
+    else
+    {
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary" @onclick="@(() => { newItem.IsIn = true; isInOutButtonGroupClicked = true;})">@localization.localizations.In</button>
+            <button type="button" class="btn btn-primary" @onclick="@(() => { newItem.IsIn = false; isInOutButtonGroupClicked = true;})">@localization.localizations.Out</button>
+        </div>
+    }
+    @if (!isInOutButtonGroupClicked && isAddItemClicked)
+    {
+        <br />
+        <label style="color:red;">@localization.localizations.InOutButtonGroupValidation</label>
+    }
+    <br />
+    <label>@localization.localizations.Sender</label>
+    @if (string.IsNullOrWhiteSpace(newItem.Sender) && isAddItemClicked)
+    {
+        <input type="text" class="form-control is-invalid" @bind="newItem.Sender" />
+        <label style="color:red;">@localization.localizations.SenderValidation</label>
+        <br />
+    }
+    else if (!string.IsNullOrWhiteSpace(newItem.Sender) && isAddItemClicked)
+    {
+        <input type="text" class="form-control is-valid" @bind="newItem.Sender" />
+        <br />
+    }
+    else
+    {
+        <input type="text" class="form-control" @bind="newItem.Sender" />
+        <br />
+    }
+    <label>@localization.localizations.Reciever</label>
+    @if (string.IsNullOrWhiteSpace(newItem.Reciever) && isAddItemClicked)
+    {
+        <input type="text" class="form-control is-invalid" @bind="newItem.Reciever" />
+        <label style="color:red;">@localization.localizations.RecieverValidation</label>
+        <br />
+    }
+    else if (!string.IsNullOrWhiteSpace(newItem.Reciever) && isAddItemClicked)
+    {
+        <input type="text" class="form-control is-valid" @bind="newItem.Reciever" />
+        <br />
+    }
+    else
+    {
+        <input type="text" class="form-control" @bind="newItem.Reciever" />
+        <br />
+    }
+    <label>@localization.localizations.Amount</label>
+    <input type="number" class="form-control" @bind="newItem.Amount" />
+    <br />
+    <label>@localization.localizations.TransactionDate</label>
+    <br />
+    <input type="text" class="form-control" @bind="newItem.TransactionDate" />
+</div>
+<br />
+<br />
+<hr />
+<!--items table-->
+<div class="input-group">
+    <div class="input-group-append">
+        <div class="input-group-text oi oi-magnifying-glass" @onclick="GetItems"></div>
+    </div>
+    <input type="text" class="form-control" @bind="searchText" />
+</div>
+<br />
+<table class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th @onclick="OrderBySender">@localization.localizations.Sender</th>
+            <th @onclick="OrderByReciever">@localization.localizations.Reciever</th>
+            <th @onclick="OrderByAmount">@localization.localizations.Amount</th>
+            <th @onclick="OrderByTransactionDate">@localization.localizations.TransactionDate</th>
+            <th @onclick="OrderByInOut">@localization.localizations.InOut</th>
+            <th>@localization.localizations.Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in items)
+        {
+            <tr>
+                <td>@item.Sender</td>
+                <td>@item.Reciever</td>
+                <td>@item.Amount</td>
+                <td>@item.TransactionDate</td>
+                @if (item.IsIn)
+                {
+                    <td>@localization.localizations.In</td>
+                }
+                @if (!item.IsIn)
+                {
+                    <td>@localization.localizations.Out</td>
+                }
+                <td>
+                    <span class="btn btn-danger oi oi-trash" @onclick="@(() => DeleteItem(item.Id))">@localization.localizations.Delete</span>
+                    <span class="btn btn-primary oi oi-list" @onclick="@(() => ModifyItem(item))">@localization.localizations.Modify</span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    public string searchText = "";
+
+    public ItemOrderEnum itemOrder = ItemOrderEnum.TransactionDateAscending;
+
+    public int deleteAllItemsCounter = 10;
+
+    public bool isInOutButtonGroupClicked = false;
+
+    [Parameter]
+    public string caseNumber { get; set; }
+
+    public bool isAddItemClicked = false;
+
+    Case _case = new Case();
+
+    List<Item> items = new List<Item>();
+
+    //object used to hold the values for creating a new item.
+    Item newItem = new Item();
+
+    //runs when the page loads
+    protected override async Task OnInitializedAsync()
+    {
+        _case = await caseService.GetCase(caseNumber);
+        await GetItems();
+        newItem.CaseNumber = caseNumber;
+    }
+
+    public async Task OrderBySender()
+    {
+        if (itemOrder == ItemOrderEnum.SenderAscending)
+        {
+            FlipOrder();
+            await GetItems();
+        }
+        else
+        {
+            itemOrder = ItemOrderEnum.SenderAscending;
+            await GetItems();
+        }
+    }
+
+    public async Task OrderByReciever()
+    {
+        if (itemOrder == ItemOrderEnum.RecieverAscending)
+        {
+            FlipOrder();
+            await GetItems();
+        }
+        else
+        {
+            itemOrder = ItemOrderEnum.RecieverAscending;
+            await GetItems();
+        }
+    }
+
+    public async Task OrderByAmount()
+    {
+        if (itemOrder == ItemOrderEnum.AmountAscending)
+        {
+            FlipOrder();
+            await GetItems();
+        }
+        else
+        {
+            itemOrder = ItemOrderEnum.AmountAscending;
+            await GetItems();
+        }
+    }
+
+    public async Task OrderByTransactionDate()
+    {
+        if (itemOrder == ItemOrderEnum.TransactionDateAscending)
+        {
+            FlipOrder();
+            await GetItems();
+        }
+        else
+        {
+            itemOrder = ItemOrderEnum.TransactionDateAscending;
+            await GetItems();
+        }
+    }
+
+    public async Task OrderByInOut()
+    {
+        if (itemOrder == ItemOrderEnum.InOutAscending)
+        {
+            FlipOrder();
+            await GetItems();
+        }
+        else
+        {
+            itemOrder = ItemOrderEnum.InOutAscending;
+            await GetItems();
+        }
+    }
+
+    public void ModifyItem(Item item)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add("item", item);
+        modalService.Show<ModifyItemModal>(localization.localizations.Modify, parameters);
+        modalService.OnClose += ModifyItemModalClosed;
+    }
+
+    public void ModifyItemModalClosed(ModalResult result)
+    {
+        GetItems();
+        this.StateHasChanged();
+
+        modalService.OnClose -= ModifyItemModalClosed;
+    }
+
+    public void FlipOrder()
+    {
+        switch (itemOrder)
+        {
+            case ItemOrderEnum.SenderAscending:
+                itemOrder = ItemOrderEnum.SenderDescending;
+                break;
+            case ItemOrderEnum.RecieverAscending:
+                itemOrder = ItemOrderEnum.RecieverDescending;
+                break;
+            case ItemOrderEnum.AmountAscending:
+                itemOrder = ItemOrderEnum.AmountDescending;
+                break;
+            case ItemOrderEnum.TransactionDateAscending:
+                itemOrder = ItemOrderEnum.TransactionDateDescending;
+                break;
+            case ItemOrderEnum.InOutAscending:
+                itemOrder = ItemOrderEnum.InOutDescending;
+                break;
+            case ItemOrderEnum.SenderDescending:
+                itemOrder = ItemOrderEnum.SenderAscending;
+                break;
+            case ItemOrderEnum.RecieverDescending:
+                itemOrder = ItemOrderEnum.RecieverAscending;
+                break;
+            case ItemOrderEnum.AmountDescending:
+                itemOrder = ItemOrderEnum.AmountAscending;
+                break;
+            case ItemOrderEnum.TransactionDateDescending:
+                itemOrder = ItemOrderEnum.TransactionDateAscending;
+                break;
+            case ItemOrderEnum.InOutDescending:
+                itemOrder = ItemOrderEnum.InOutAscending;
+                break;
+            default:
+                itemOrder = ItemOrderEnum.TransactionDateDescending;
+                break;
+        }
+    }
+
+    public async Task GetItems()
+    {
+        items = await itemService.GetItems(caseNumber, itemOrder, searchText);
+    }
+
+    public bool IsAddItemValid()
+    {
+        if (string.IsNullOrWhiteSpace(newItem.Sender))
+        {
+            return false;
+        }
+        if (string.IsNullOrWhiteSpace(newItem.Reciever))
+        {
+            return false;
+        }
+        if (!isInOutButtonGroupClicked)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public async Task CreateItem()
+    {
+        isAddItemClicked = true;
+
+        if (IsAddItemValid())
+        {
+            await itemService.CreateItem(newItem);
+            await GetItems();
+        }
+    }
+
+    public async Task DeleteItem(long id)
+    {
+        await itemService.DeleteItem(id);
+        await GetItems();
+    }
+
+    public async Task DeleteAllItems()
+    {
+        if (deleteAllItemsCounter >= 1)
+        {
+            deleteAllItemsCounter--;
+            return;
+        }
+        deleteAllItemsCounter = 10;
+        await itemService.DeleteAllItems(_case.CaseNumber);
+        await GetItems();
+    }
+}

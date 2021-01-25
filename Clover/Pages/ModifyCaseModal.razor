@@ -1,0 +1,71 @@
+﻿@inject LocalizationService localization
+@inject IModalService modalService
+@inject CaseService caseService
+@inject ItemService itemService
+<!--Modal Body-->
+<hr />
+<label>@localization.localizations.NumberOfItems</label>
+<span class="badge badge-pill badge-primary">@items.Count</span>
+<label>@localization.localizations.Sum</label>
+<span class="badge badge-pill badge-primary">@itemService.GetSum(items)</span>
+<br />
+<label>@localization.localizations.CaseNumber</label>
+@if (string.IsNullOrWhiteSpace(_case.CaseNumber))
+{
+    <!--if the case name is empty or only whitespaces-->
+    <input type="text" class="form-control is-invalid" @bind="_case.CaseNumber" />
+    <label style="color:red;">@localization.localizations.CaseNumberValidation</label>
+    <br />
+}
+else if (!CaseService.IsCaseNameValid(_case.CaseNumber))
+{
+    <!--if a case with the same case name already exists-->
+    <input type="text" class="form-control is-invalid" @bind="_case.CaseNumber" />
+    <label style="color:red;">@localization.localizations.CaseNameAlreadyExists</label>
+    <br />
+}
+else if (CaseService.IsCaseNameValid(_case.CaseNumber))
+{
+    <!--if the case is valid-->
+    <input type="text" class="form-control is-valid" @bind="_case.CaseNumber" />
+    <br />
+}
+else
+{
+    <!--default-->
+    <input type="text" class="form-control" @bind="_case.CaseNumber" />
+    <br />
+}
+<br />
+<label>@localization.localizations.Comment</label>
+<input type="text" class="form-control" @bind="_case.Comment" />
+<!--Modal Footer-->
+<hr />
+<div class="btn btn-success" @onclick="Save">@localization.localizations.Save</div>
+
+@code {
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+
+    public Case _case { get; set;}
+
+    public List<Item> items { get; set; }
+
+    public string oldCaseNumber { get; set; }
+
+    //runs when the modal loads
+    protected override async Task OnInitializedAsync()
+    {
+        _case = Parameters.Get<Case>("_case");
+        items = await itemService.GetItems(_case.CaseNumber);
+        oldCaseNumber = _case.CaseNumber;
+    }
+
+    public async Task Save()
+    {
+        if (CaseService.IsCaseNameValid(_case.CaseNumber) && !string.IsNullOrWhiteSpace(_case.CaseNumber))
+        {
+            await caseService.ModifyCase(oldCaseNumber, _case.CaseNumber, _case.Comment);
+            modalService.Close(ModalResult.Ok("save"));
+        }
+    }
+}

@@ -1,0 +1,2 @@
+This is an old project i was making for my mom to help her with her job. In the meantime she got promoted and there was no need for the software anymore so it was abandoned.
+Made with: c# + Blazor + SQLite

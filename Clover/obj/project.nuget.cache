@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "dgSpecHash": "KAsn3ktpQWdy1vJ3Ls2Mbci7Xuo2Rpo9ONTCPSGel2WqRim+zzku5+PCNkGrxNYpRskZ/pajUnEGFMrCge5VYQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\vetur\\Downloads\\Clover\\Clover\\Clover.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\vetur\\.nuget\\packages\\blazored.modal\\3.0.0\\blazored.modal.3.0.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.aspnetcore.authorization\\3.1.0\\microsoft.aspnetcore.authorization.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.aspnetcore.components\\3.1.0\\microsoft.aspnetcore.components.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\3.1.0\\microsoft.aspnetcore.components.analyzers.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.aspnetcore.components.forms\\3.1.0\\microsoft.aspnetcore.components.forms.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.aspnetcore.components.web\\3.1.0\\microsoft.aspnetcore.components.web.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.aspnetcore.metadata\\3.1.0\\microsoft.aspnetcore.metadata.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\3.1.0\\microsoft.extensions.dependencyinjection.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\3.1.0\\microsoft.extensions.dependencyinjection.abstractions.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\3.1.0\\microsoft.extensions.logging.abstractions.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.extensions.options\\3.1.0\\microsoft.extensions.options.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.extensions.primitives\\3.1.0\\microsoft.extensions.primitives.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\microsoft.jsinterop\\3.1.0\\microsoft.jsinterop.3.1.0.nupkg.sha512",
+    "C:\\Users\\vetur\\.nuget\\packages\\system.data.sqlite.core\\1.0.112\\system.data.sqlite.core.1.0.112.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,99 @@
+﻿@inject IModalService modalService
+@inject ItemService itemService
+@inject LocalizationService localization
+<!--Modal Body-->
+<hr />
+@if (item.IsIn)
+{
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-success" @onclick="@(() => item.IsIn = true)">@localization.localizations.In</button>
+        <button type="button" class="btn btn-primary" @onclick="@(() => item.IsIn = false)">@localization.localizations.Out</button>
+    </div>
+}
+else if (!item.IsIn)
+{
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary" @onclick="@(() => item.IsIn = true)">@localization.localizations.In</button>
+        <button type="button" class="btn btn-success" @onclick="@(() => item.IsIn = false)">@localization.localizations.Out</button>
+    </div>
+}
+else
+{
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary" @onclick="@(() => item.IsIn = true)">@localization.localizations.In</button>
+        <button type="button" class="btn btn-primary" @onclick="@(() => item.IsIn = false)">@localization.localizations.Out</button>
+    </div>
+}
+<br />
+<label>@localization.localizations.Sender</label>
+@if (string.IsNullOrWhiteSpace(item.Sender))
+{
+    <input type="text" class="form-control is-invalid" @bind="item.Sender" />
+    <label style="color:red;">@localization.localizations.SenderValidation</label>
+    <br />
+}
+else if (!string.IsNullOrWhiteSpace(item.Sender))
+{
+    <input type="text" class="form-control is-valid" @bind="item.Sender" />
+    <br />
+}
+else
+{
+    <input type="text" class="form-control" @bind="item.Sender" />
+    <br />
+}
+<label>@localization.localizations.Reciever</label>
+@if (string.IsNullOrWhiteSpace(item.Reciever))
+{
+    <input type="text" class="form-control is-invalid" @bind="item.Reciever" />
+    <label style="color:red;">@localization.localizations.RecieverValidation</label>
+    <br />
+}
+else if (!string.IsNullOrWhiteSpace(item.Reciever))
+{
+    <input type="text" class="form-control is-valid" @bind="item.Reciever" />
+    <br />
+}
+else
+{
+    <input type="text" class="form-control" @bind="item.Reciever" />
+    <br />
+}
+<label>@localization.localizations.Amount</label>
+<input type="number" class="form-control" @bind="item.Amount" />
+<br />
+<label>@localization.localizations.TransactionDate</label>
+<br />
+<input type="text" class="form-control" @bind="item.TransactionDate" />
+<!--Modal Footer-->
+<hr />
+<div class="btn btn-success" @onclick="Save">@localization.localizations.Save</div>
+@code {
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+
+    public Item item { get; set; } = new Item();
+
+    //runs when the modal loads
+    protected override async Task OnInitializedAsync()
+    {
+        item = Parameters.Get<Item>("item");
+    }
+
+    public async Task Save()
+    {
+        if (IsModifyItemValid())
+        {
+            await itemService.ModifyItem(item);
+            modalService.Close(ModalResult.Ok("save"));
+        }
+    }
+
+    public bool IsModifyItemValid()
+    {
+        if (string.IsNullOrWhiteSpace(item.Sender) || string.IsNullOrWhiteSpace(item.Reciever))
+        {
+            return false;
+        }
+        return true;
+    }
+}
